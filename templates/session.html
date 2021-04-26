@@ -1,0 +1,30 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <title>Audio Recorder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+
+    <h3 style='color: #ccc;font-size: 30px;'>My Audio Experiment</h3>
+    <div class="message_holder"></div>
+
+
+  <div id="controls">
+      <img id="record" src="{{ url_for('static', filename='mic128.png') }}" >
+  </div>
+
+  <div id="wavedisplay">
+    <div id="wavefiles">
+    </div>
+</div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js" integrity="sha384-LzhRnpGmQP+lOvWruF/lgkcqD+WDVt9fU3H4BWmwP5u5LTmkUGafMcpZKNObVMLU" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+      
+    </script>
+
+  </body>
+  </html>
