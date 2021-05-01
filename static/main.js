@@ -4,7 +4,7 @@ var socket = io.connect('http://' + document.domain + ':' + location.port);
 // Define the audio context guys
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
-var audioContext = new AudioContext();
+var audioContext = new AudioContext({sampleRate: 44100});
 var audioInput = null,
     realAudioInput = null,
     inputPoint = null,
@@ -16,9 +16,13 @@ socket.on('add-wavefile', function(url) {
     // add new recording to page
     audio = document.createElement('p');
     audio.innerHTML = '<audio src="' + url + '" controls>';
-    document.getElementById('wavefiles').appendChild(audio);
+    // document.getElementById('wavefiles').appendChild(audio);
+    document.getElementById('wavefiles').innerHTML = audio.innerHTML
 });
 
+socket.on('model-output', function(curr_audio_state){
+    document.getElementById("audio_state").innerHTML = curr_audio_state;
+});
 
 
 function convertToMono( input ) {
@@ -32,18 +36,19 @@ function convertToMono( input ) {
 }
 
 function gotStream(stream) {
-    inputPoint = audioContext.createGain();
+    // inputPoint = audioContext.createGain();
 
     // Create an AudioNode from the stream.
     realAudioInput = audioContext.createMediaStreamSource(stream);
     audioInput = realAudioInput;
 
     audioInput = convertToMono( audioInput );
-    audioInput.connect(inputPoint);
+    // audioInput.connect(inputPoint);
 
     analyserNode = audioContext.createAnalyser();
     analyserNode.fftSize = 2048;
-    inputPoint.connect( analyserNode );
+    // inputPoint.connect( analyserNode );
+    audioInput.connect( analyserNode );
 
     scriptNode = (audioContext.createScriptProcessor || audioContext.createJavaScriptNode).call(audioContext, 1024, 1, 1);
     scriptNode.onaudioprocess = function (audioEvent) {
@@ -61,13 +66,13 @@ function gotStream(stream) {
             socket.emit('write-audio', buffer);
         }
     }
-    inputPoint.connect(scriptNode);
+    audioInput.connect(scriptNode);
     scriptNode.connect(audioContext.destination);
 
-    zeroGain = audioContext.createGain();
-    zeroGain.gain.value = 0.0;
-    inputPoint.connect( zeroGain );
-    zeroGain.connect( audioContext.destination );
+    // zeroGain = audioContext.createGain();
+    // zeroGain.gain.value = 0.0;
+    // inputPoint.connect( zeroGain );
+    // audioInput.connect( audioContext.destination );
 }
 
 function initAudio() {
@@ -88,6 +93,7 @@ function initAudio() {
 // Additional Function to glow image, and add recording css style
 function toggleRecording( e ) {
     if (e.classList.contains('recording')) {
+        console.log('END RECORDING INITIAZIED .. DELETING session')
         // stop recording
         e.classList.remove('recording');
         recording = false;

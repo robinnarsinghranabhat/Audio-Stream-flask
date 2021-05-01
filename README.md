@@ -4,3 +4,7 @@ Client side js records the audio and contionusly streams it into the server-side
 
 Further work : 
 - In server side, after a specific size is met, automatically save it, pass it to deep learning model and emit back results in client side
+
+
+flask-Socketio decorator skips a function if it's take more than a specified time .
+that's why my model is not working. need to find a workaround 
