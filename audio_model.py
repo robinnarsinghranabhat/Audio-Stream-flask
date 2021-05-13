@@ -47,32 +47,51 @@ class PredictAudio(object):
             ]
         )
 
+    def predict_from_array(self, stream):
+        ## do a librosa.resample(stream, 44100, 44100), if np.float32
+        data = self.audio_transformation(stream)
+        data = Tensor(data.reshape(-1, 1, 128, 345))
+
+        out = self.model(data)
+        out = torch.nn.functional.softmax(out)
+        out_ind = torch.argmax(out).item()
+        out_val = torch.max(out).item()
+
+        if out_ind == 1 and out_val > 0.9:
+            return "Started"
+
+        if out_ind == 2 and out_val > 0.9:
+            return "Activated"
+        
+        return "Normal"
+
+
     def predict(self):
-        # data, _ = librosa.load(self.filepath, sr=self.sr)
-        # data = self.audio_transformation(data)
-        # data = Tensor(data.reshape(-1, 1, 128, 345))
 
-        # out = self.model(data)
-        # out = torch.nn.functional.softmax(out)
-        # out_ind = torch.argmax(out).item()
-        # out_val = torch.max(out).item()
+        data, _ = librosa.load(self.filepath, sr=self.sr)
+        data = self.audio_transformation(data)
+        data = Tensor(data.reshape(-1, 1, 128, 345))
 
-        # if out_ind == 1 and out_val > 0.9:
-        #     return "Started"
+        out = self.model(data)
+        out = torch.nn.functional.softmax(out)
+        out_ind = torch.argmax(out).item()
+        out_val = torch.max(out).item()
 
-        # if out_ind == 2 and out_val > 0.9:
-        #     return "Activated"
+        if out_ind == 1 and out_val > 0.9:
+            return "Started"
 
-        # return "No keywords Detected"
-        return random.choice(['a', 'b', 'c', 'd', 'e'])
+        if out_ind == 2 and out_val > 0.9:
+            return "Activated"
 
 
 if __name__ == '__main__':
     p = PredictAudio(TEST_FILE)
     print(p.predict())
 
-# self.filepath  = "static/_files/1.wav"
+# self.filepath  = "static/_files/0.wav"
 # self.filepath = "C:/Users/Robin/Downloads/million_dollar_projects/podcast_research/Podcast-Audio-Processing/data/external/processed/test"
 
 
 # librosa.feature.melspectrogram(x,sr=self.sr,n_fft=2048,hop_length=512,n_mels=128,fmin=20,fmax=8300)
+
+# data_load, _ = librosa.load(filepath, sr=44100)

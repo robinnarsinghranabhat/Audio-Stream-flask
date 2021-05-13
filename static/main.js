@@ -21,8 +21,14 @@ socket.on('add-wavefile', function(url) {
 });
 
 socket.on('model-output', function(curr_audio_state){
+    console.log('output socket is invoked finally')
     document.getElementById("audio_state").innerHTML = curr_audio_state;
 });
+
+socket.on('connect', function() {
+    console.log('CONNECTION ESTABLISHED !!')
+});
+
 
 
 function convertToMono( input ) {
